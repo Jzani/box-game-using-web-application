@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .container {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);  /* 10 equal columns */
+      gap: 10px;  /* Space between boxes */
+      width: 100%;  /* Full width container */
+    }
+    .box {
+      height: 50px;
+      text-align: center;
+      line-height: 50px;  /* Vertically center the text */
+      border-radius: 5px;
+      background-color: lightgray; /* Default color */
+      color: white;  /* Text color */
+    }
+    .button-container {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container" id="boxContainer">
+  <!-- Creating 60 boxes -->
+</div>
+
+<div class="button-container">
+  <button onclick="startColorChange()">Start</button>
+  <button onclick="stopColorChange()">Stop</button>
+  <button onclick="restartColorChange()">Restart</button>
+</div>
+
+<script>
+  let totalBoxes = 60;
+  let currentBox = 0;
+  let intervalId = null;
+
+  // Function to generate colors
+  function generateColor(index, totalBoxes) {
+    let hue = Math.floor((index / totalBoxes) * 360); // Vary the hue between 0 and 360 for different colors
+    return `hsl(${hue}, 100%, 50%)`;  // HSL format for bright, distinct colors
+  }
+
+  // Create 60 boxes dynamically
+  const container = document.getElementById('boxContainer');
+  for (let i = 0; i < totalBoxes; i++) {
+    const box = document.createElement('div');
+    box.className = 'box';
+    box.innerHTML = i + 1;  // Add number to each box
+    container.appendChild(box);
+  }
+
+  // Function to start color change
+  function startColorChange() {
+    if (intervalId !== null) return; // Prevent multiple intervals
+    intervalId = setInterval(() => {
+      const boxes = document.querySelectorAll('.box');
+      if (currentBox < totalBoxes) {
+        // Only change the color of the current box
+        boxes[currentBox].style.backgroundColor = generateColor(currentBox, totalBoxes);
+        currentBox++;
+      } else {
+        stopColorChange(); // Stop when all boxes are colored
+      }
+    }, 500); // Change color every 500ms
+  }
+
+  // Function to stop the color change
+  function stopColorChange() {
+    clearInterval(intervalId); // Stop the interval
+    intervalId = null; // Reset the interval ID
+  }
+
+  // Function to restart color change
+  function restartColorChange() {
+    stopColorChange(); // Stop any running interval
+    currentBox = 0; // Reset to the first box
+    // Reset all boxes back to the default gray color
+    const boxes = document.querySelectorAll('.box');
+    boxes.forEach(box => {
+      box.style.backgroundColor = 'lightgray';
+    });
+    startColorChange(); // Start again from the first box
+  }
+</script>
+
+</body>
+</html>
